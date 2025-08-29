@@ -1,0 +1,241 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+
+nav ul a,
+nav .brand-logo {
+  color: #444;
+}
+
+p {
+  line-height: 1rem;
+}
+
+.sidenav-trigger {
+  color: #26a69a;
+}
+
+.parallax-container {
+  min-height: 720px;
+  line-height: 0;
+  height: auto;
+  color: rgba(255,255,255,.9);
+}
+  .parallax-container .section {
+    width: 100%;
+  }
+
+@media only screen and (max-width : 992px) {
+  .parallax-container .section {
+    position: absolute;
+    top: 40%;
+  }
+  #index-banner .section {
+    top: 10%;
+  }
+}
+
+@media only screen and (max-width : 600px) {
+  #index-banner .section {
+    top: 0;
+  }
+}
+
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+  font-size: inherit;
+}
+
+footer.page-footer {
+  margin: 0;
+}
+
+
+#img-custom-circle-actor {
+
+  position: absolute;
+  max-width: 30%;
+  max-height: 60%;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: white;
+  border-width: 5px;
+  z-index: 1;
+  left: 35%;
+  top: 20%;
+}
+
+
+/* new1----for the fill the entire screen */
+
+/* Force the hero/banner section to fill the entire screen */
+#index-banner.parallax-container {
+  height: 100vh; /* Full screen */
+  margin: 0;
+  padding: 0;
+}
+
+/* Make the background image cover the whole area */
+#index-banner .parallax img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Prevent stretching */
+}
+
+
+
+
+
+.genre-search .btn {
+  border: 1px solid white;
+  font-weight: bold;
+  text-transform: none;
+}
+
+
+
+
+
+
+
+
+
+
+/*new2--- for the cards update */
+
+/* Dark overlay on banner */
+
+
+/* Centered hero text */
+#index-banner h1 {
+  font-weight: 700;
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+}
+
+#index-banner .search-form {
+  margin-top: 30px;
+}
+
+/* Search input styling */
+.search-input {
+  border-radius: 25px;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.15);
+}
+
+.search-btn {
+  border-radius: 25px;
+  margin-left: 10px;
+}
+
+
+
+
+
+
+/* Movie cards */
+/* Movie cards */
+
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s ease-in-out;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.card-image img {
+  height: 350px;
+  object-fit: cover;
+}
+
+/* Fix all title lines */
+
+.card-title {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  height: 3.9em;              /* space for ~3 lines */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;      /* clamp to 3 lines max */
+  -webkit-box-orient: vertical;
+}
+
+
+
+
+/*new3--- for the navbar */
+
+
+
+nav {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+nav .brand-logo {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+nav .material-icons {
+  vertical-align: middle;
+}
+
+
+
+
+
+
+
+
+/* Make search bar like YouTube */
+/* Make search bar like YouTube */
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;   /* border around input + button */
+  border-radius: 25px;
+  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;           /* center horizontally */
+}
+
+.search-bar input.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0.03rem 0.8rem;
+  font-size: 1rem;
+}
+
+
+
+
+
+.search-bar button.search-btn {
+  background: transparent !important;
+  color: white !important;
+  font-weight: bold;
+  border: none !important;  /* 🔹 remove border */
+  box-shadow: none !important; /* 🔹 remove Materialize shadow */
+  margin: 0;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.search-bar button.search-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important; /* subtle hover */
+}

@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Movie Review Website</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{% static 'css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+
+
+<!-- Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+  {% if user.is_authenticated %}
+    <li><a href="{% url 'profile' user.username %}">Profile</a></li>
+    <li><a href="{% url 'change-password' %}">Change Password</a></li>
+    <li class="divider"></li>
+    <li>
+      <form method="post" action="{% url 'logout' %}" style="margin: 0; padding: 0;">
+        {% csrf_token %}
+        <button type="submit" style="background: none; border: none; color: rgba(0,0,0,0.87); font-size: 14px; padding: 14px 16px; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          Log out
+        </button>
+      </form>
+    </li>
+  {% endif %}
+</ul> 
+
+
+
+<nav class="blue z-depth-1">
+  <div class="nav-wrapper container">
+    <!-- Home Icon -->
+    <a href="{% url 'index' %}" class="brand-logo black-text">
+      <i class="material-icons left">movie</i>Home
+    </a>
+
+    <ul class="right hide-on-med-and-down">
+      {% if user.is_authenticated %}
+        <!-- Profile Dropdown -->
+        <li>
+          <a class="dropdown-trigger black-text" href="#!" data-target="dropdown1">
+            <i class="material-icons left">account_circle</i>{{ user.username }}
+            <i class="material-icons right">arrow_drop_down</i>
+          </a>
+        </li>
+      {% else %}
+        <!-- Sign in button -->
+        <li>
+          <a href="{% url 'login' %}" class="waves-effect waves-light btn-small blue">
+            <i class="material-icons left">login</i>Sign In
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+        
+
+{% block banner %}
+{% endblock %}
+
+  <div class="container">
+    <div class="section">
+
+    {% block content %}
+    {% endblock %}
+
+    </div>
+  </div>
+
+<!-----changes from here friday--->
+  
+
+
+  <!--Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/init.js' %}"></script>
+
+  </body>
+</html>

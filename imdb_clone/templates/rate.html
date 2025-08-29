@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .rating-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .movie-info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  
+  .rating-form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  .star-rating {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  
+  .star-rating input {
+    display: none;
+  }
+  
+  .star-rating label {
+    font-size: 2.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .star-rating label:hover,
+  .star-rating label:hover ~ label,
+  .star-rating input:checked ~ label {
+    color: #ffd700;
+    transform: scale(1.1);
+  }
+  
+  .rating-description {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+    color: #666;
+    min-height: 30px;
+  }
+  
+  .review-textarea {
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    padding: 15px;
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .review-textarea:focus {
+    border-color: #26a69a;
+    box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.1);
+  }
+  
+  .submit-button {
+    background: linear-gradient(45deg, #26a69a, #4db6ac);
+    border: none;
+    border-radius: 25px;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
+  }
+  
+  .character-count {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 5px;
+  }
+</style>
+
+<div class="rating-form-container">
+  <!-- Movie Info Card -->
+  <div class="movie-info-card">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div style="flex-shrink: 0;">
+        <img src="{{ movie.Poster.url }}" alt="{{ movie.Title }}" style="width: 100px; height: 150px; border-radius: 8px; object-fit: cover;">
+      </div>
+      <div style="flex: 1;">
+        <h3 style="margin: 0 0 10px 0; font-size: 2rem; font-weight: bold;">{{ movie.Title }}</h3>
+        <p style="margin: 0 0 5px 0; font-size: 1.1rem; opacity: 0.9;">{{ movie.Type|title }} • {{ movie.Year }}</p>
+        {% if movie.Runtime %}
+          <p style="margin: 0 0 15px 0; opacity: 0.8;">{{ movie.Runtime }} • {{ movie.Rated }}</p>
+        {% endif %}
+        <p style="margin: 0; opacity: 0.9; line-height: 1.4;">{{ movie.Plot|truncatewords:25 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rating Form Card -->
+  <div class="rating-form-card">
+    <h4 style="text-align: center; margin-bottom: 30px; color: #333; font-size: 1.8rem;">Share Your Review</h4>
+    
+    <form method="post" action="" role="form">
+      {% csrf_token %}
+      
+      <!-- Star Rating Section -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h5 style="margin-bottom: 20px; color: #555;">How would you rate this movie?</h5>
+        
+        <div class="star-rating" id="starRating">
+          <input type="radio" name="rate" value="10" id="star10">
+          <label for="star10" title="10 - Master Piece">★</label>
+          <input type="radio" name="rate" value="9" id="star9">
+          <label for="star9" title="9 - Perfect">★</label>
+          <input type="radio" name="rate" value="8" id="star8">
+          <label for="star8" title="8 - Very Good">★</label>
+          <input type="radio" name="rate" value="7" id="star7">
+          <label for="star7" title="7 - Good">★</label>
+          <input type="radio" name="rate" value="6" id="star6">
+          <label for="star6" title="6 - Watchable">★</label>
+          <input type="radio" name="rate" value="5" id="star5">
+          <label for="star5" title="5 - OK">★</label>
+          <input type="radio" name="rate" value="4" id="star4">
+          <label for="star4" title="4 - Bad">★</label>
+          <input type="radio" name="rate" value="3" id="star3">
+          <label for="star3" title="3 - Terrible">★</label>
+          <input type="radio" name="rate" value="2" id="star2">
+          <label for="star2" title="2 - Horrible">★</label>
+          <input type="radio" name="rate" value="1" id="star1">
+          <label for="star1" title="1 - Trash">★</label>
+        </div>
+        
+        <div class="rating-description" id="ratingDescription">
+          Click stars to rate this movie
+        </div>
+      </div>
+
+      <!-- Review Text Section -->
+      <div style="margin-bottom: 30px;">
+        <h5 style="margin-bottom: 15px; color: #555;">Write your review (optional)</h5>
+        <textarea name="text" class="review-textarea" placeholder="Share your thoughts about this movie... What did you like or dislike? Would you recommend it to others?" maxlength="3000" id="reviewText"></textarea>
+        <div class="character-count" id="charCount">0 / 3000 characters</div>
+      </div>
+
+      <!-- Submit Button -->
+      <div style="text-align: center;">
+        <button type="submit" class="submit-button">
+          <i class="material-icons left" style="margin-right: 8px;">star</i>
+          Submit Review
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ratingDescriptions = {
+    '1': '1/10 - Trash',
+    '2': '2/10 - Horrible', 
+    '3': '3/10 - Terrible',
+    '4': '4/10 - Bad',
+    '5': '5/10 - OK',
+    '6': '6/10 - Watchable',
+    '7': '7/10 - Good',
+    '8': '8/10 - Very Good',
+    '9': '9/10 - Perfect',
+    '10': '10/10 - Master Piece'
+  };
+  
+  const stars = document.querySelectorAll('.star-rating input');
+  const ratingDescription = document.getElementById('ratingDescription');
+  const reviewText = document.getElementById('reviewText');
+  const charCount = document.getElementById('charCount');
+  
+  // Handle star rating
+  stars.forEach(star => {
+    star.addEventListener('change', function() {
+      const rating = this.value;
+      ratingDescription.textContent = ratingDescriptions[rating];
+      ratingDescription.style.color = '#ff6f00';
+      ratingDescription.style.fontWeight = 'bold';
+    });
+  });
+  
+  // Handle character count
+  reviewText.addEventListener('input', function() {
+    const length = this.value.length;
+    charCount.textContent = length + ' / 3000 characters';
+    
+    if (length > 2700) {
+      charCount.style.color = '#c62828';
+    } else if (length > 2400) {
+      charCount.style.color = '#ff8f00';
+    } else {
+      charCount.style.color = '#999';
+    }
+  });
+  
+  // Reverse star order effect
+  const starLabels = document.querySelectorAll('.star-rating label');
+  starLabels.forEach((label, index) => {
+    label.addEventListener('mouseenter', function() {
+      // Highlight this star and all stars to the right
+      for (let i = index; i < starLabels.length; i++) {
+        starLabels[i].style.color = '#ffd700';
+        starLabels[i].style.transform = 'scale(1.1)';
+      }
+    });
+    
+    label.addEventListener('mouseleave', function() {
+      // Reset all stars unless they're checked
+      starLabels.forEach((star, starIndex) => {
+        const input = document.getElementById(star.getAttribute('for'));
+        if (!input.checked) {
+          star.style.color = '#ddd';
+          star.style.transform = 'scale(1)';
+        }
+      });
+    });
+  });
+});
+</script>
+
+{% endblock %}

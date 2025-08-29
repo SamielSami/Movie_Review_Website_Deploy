@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block banner %}
+  <div id="index-banner" class="parallax-container">
+    <div class="overlay"></div> <!-- dark overlay -->
+    <div class="section no-pad-bot">
+      <div class="container center-align">
+        <h1 class="header white-text text-lighten-2">Movie Review Website</h1>
+        <p class="flow-text white-text">Search for your favorite movies & write reviews</p>
+
+        <!-- Search Bar -->
+        <form method="get" action="" class="search-form">
+          <div class="search-bar">
+            <input type="text" id="search" name="q" value="{{ request.GET.q }}" 
+                  placeholder="Search movies..." class="white-text search-input">
+                  
+            <button type="submit" class="white-text search-input">
+              <i class="material-icons">search</i>
+            </button>
+          </div>
+        </form>
+
+
+
+          <!-- Search by Genre Button (below search bar) -->
+          <div class="genre-search" style="margin-top: 15px; text-align: center;">
+            <a class="dropdown-trigger btn transparent white-text" href="#!" data-target="genre-dropdown">
+              Search by Genre<i class="material-icons right">arrow_drop_down</i>
+            </a>
+          </div>
+
+          <!-- Dropdown Menu -->
+          <ul id="genre-dropdown" class="dropdown-content">
+            <li><a href="{% url 'genres' 'action' %}">Action</a></li>
+            <li><a href="{% url 'genres' 'drama' %}">Drama</a></li>
+            <li><a href="{% url 'genres' 'sci-fi' %}">Sci-fi</a></li>
+            <li><a href="{% url 'genres' 'adventure' %}">Adventure</a></li>
+            <li><a href="{% url 'genres' 'thriller' %}">Thriller</a></li>
+            <li><a href="{% url 'genres' 'crime' %}">Crime</a></li>
+            <li><a href="{% url 'genres' 'animation' %}">Animation</a></li>
+            <li><a href="{% url 'genres' 'crime' %}">Crime</a></li>
+            <li><a href="{% url 'genres' 'comedy' %}">Comedy</a></li>
+            <li><a href="{% url 'genres' 'horror' %}">Horror</a></li>
+            <li><a href="{% url 'genres' 'fantasy' %}">Fantasy</a></li>
+
+
+          </ul>        
+
+
+
+
+      </div>
+    </div>
+    <div class="parallax"><img src="{% static 'img/moviewall2.jpg' %}" alt="Movie Background"></div>
+  </div>
+{% endblock %}
+
+

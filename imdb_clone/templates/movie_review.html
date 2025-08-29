@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .review-page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .movie-header-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  
+  .review-main-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-left: 5px solid #26a69a;
+  }
+  
+  .reviewer-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+  }
+  
+  .rating-display {
+    background: linear-gradient(45deg, #ff6f00, #ff8f00);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 111, 0, 0.3);
+  }
+  
+  .review-content {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 4px solid #26a69a;
+    margin: 20px 0;
+    line-height: 1.7;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+  
+  .like-btn, .dislike-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .like-btn {
+    background: #e8f5e8;
+    color: #2e7d32;
+  }
+  
+  .like-btn:hover {
+    background: #c8e6c9;
+    transform: translateY(-2px);
+  }
+  
+  .dislike-btn {
+    background: #ffebee;
+    color: #c62828;
+  }
+  
+  .dislike-btn:hover {
+    background: #ffcdd2;
+    transform: translateY(-2px);
+  }
+  
+  .comments-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  .comment-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    transition: all 0.3s ease;
+    border-left: 3px solid #26a69a;
+  }
+  
+  .comment-item:hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+  
+  .comment-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .comment-form {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 20px;
+    border: 2px dashed #26a69a;
+  }
+  
+  .comment-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+  }
+  
+  .comment-textarea:focus {
+    border-color: #26a69a;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.1);
+  }
+  
+  .submit-comment-btn {
+    background: linear-gradient(45deg, #26a69a, #4db6ac);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 25px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+  }
+  
+  .submit-comment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+  }
+  
+  .delete-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #c62828;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .delete-btn:hover {
+    background: #ffebee;
+    transform: scale(1.1);
+  }
+</style>
+
+<div class="review-page-container">
+  <!-- Movie Header -->
+  <div class="movie-header-card">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div style="flex-shrink: 0;">
+        <img src="{{ movie.Poster.url }}" alt="{{ movie.Title }}" style="width: 80px; height: 120px; border-radius: 8px; object-fit: cover;">
+      </div>
+      <div style="flex: 1;">
+        <h3 style="margin: 0 0 8px 0; font-size: 1.8rem; font-weight: bold;">{{ movie.Title }}</h3>
+        <p style="margin: 0 0 5px 0; opacity: 0.9;">{{ movie.Type|title }} • {{ movie.Year }}</p>
+        <p style="margin: 0; opacity: 0.8; line-height: 1.4;">{{ movie.Plot|truncatewords:20 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Review Card -->
+  <div class="review-main-card">
+    <div class="reviewer-profile">
+      <div style="flex-shrink: 0;">
+        {% if review.user.profile.picture %}
+          <img src="{{ review.user.profile.picture.url }}" alt="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+          <img src="{% static 'img/no_avatar.jpg' %}" alt="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+        {% endif %}
+      </div>
+      <div style="flex: 1;">
+        <h5 style="margin: 0; font-weight: bold; color: #333;">{{ review.user.first_name }} {{ review.user.last_name }}</h5>
+        <p style="margin: 0; color: #666;">@{{ review.user.username }}</p>
+        <p style="margin: 0; color: #999; font-size: 0.9em;">{{ review.date|date:"F d, Y" }}</p>
+      </div>
+      <div>
+        <div class="rating-display">
+          <i class="material-icons">star</i>
+          {{ review.rate }}/10
+        </div>
+      </div>
+    </div>
+
+    {% if review.text %}
+      <div class="review-content">
+        <h6 style="color: #666; margin-bottom: 15px; font-weight: 500;">
+          <i class="material-icons tiny" style="vertical-align: middle;">rate_review</i>
+          Review
+        </h6>
+        {{ review.text|linebreaks }}
+      </div>
+    {% else %}
+      <div class="review-content" style="font-style: italic; color: #999; text-align: center;">
+        <i class="material-icons" style="font-size: 48px; color: #ddd; display: block; margin-bottom: 10px;">rate_review</i>
+        No written review provided - rating only.
+      </div>
+    {% endif %}
+
+    <div class="action-buttons">
+      {% if current_user and current_user != review.user %}
+        <a href="{% url 'user-review-like' review.user.username movie.imdbID %}" class="like-btn">
+          <i class="material-icons">thumb_up</i>
+          <span>{{ review.likes }} Like{{ review.likes|pluralize }}</span>
+        </a>
+        <a href="{% url 'user-review-unlike' review.user.username movie.imdbID %}" class="dislike-btn">
+          <i class="material-icons">thumb_down</i>
+          <span>{{ review.unlikes }} Dislike{{ review.unlikes|pluralize }}</span>
+        </a>
+      {% else %}
+        <span style="display: flex; align-items: center; gap: 20px; color: #666;">
+          {% if review.likes > 0 %}
+            <span style="display: flex; align-items: center; gap: 5px;">
+              <i class="material-icons" style="color: #2e7d32;">thumb_up</i>
+              {{ review.likes }} Like{{ review.likes|pluralize }}
+            </span>
+          {% endif %}
+          {% if review.unlikes > 0 %}
+            <span style="display: flex; align-items: center; gap: 5px;">
+              <i class="material-icons" style="color: #c62828;">thumb_down</i>
+              {{ review.unlikes }} Dislike{{ review.unlikes|pluralize }}
+            </span>
+          {% endif %}
+        </span>
+      {% endif %}
+      
+      {% if can_delete %}
+        <a href="{% url 'delete-review' movie.imdbID %}" style="margin-left: auto; color: #c62828; text-decoration: none; display: flex; align-items: center; gap: 5px; padding: 8px 15px; border-radius: 20px; transition: all 0.3s ease;">
+          <i class="material-icons">delete</i>
+          Delete Review
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="comments-section">
+    <h4 style="margin-bottom: 25px; color: #333; display: flex; align-items: center; gap: 10px;">
+      <i class="material-icons">comment</i>
+      Comments ({{ comments.count }})
+    </h4>
+
+    {% if comments %}
+      <div class="comments-list">
+        {% for comment in comments %}
+          <div class="comment-item">
+            <div class="comment-author">
+              {% if comment.user.profile.picture %}
+                <img src="{{ comment.user.profile.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+              {% else %}
+                <img src="{% static 'img/no_avatar.jpg' %}" alt="" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+              {% endif %}
+              <div>
+                <strong style="color: #333;">{{ comment.user.first_name }} {{ comment.user.last_name }}</strong>
+                <span style="color: #666; font-size: 0.9em;">@{{ comment.user.username }}</span>
+                <p style="margin: 0; color: #999; font-size: 0.8em;">{{ comment.date|date:"M d, Y H:i" }}</p>
+              </div>
+              {% if current_user == comment.user %}
+                <a href="{% url 'delete-comment' comment.id %}" class="delete-btn" title="Delete comment">
+                  <i class="material-icons">delete</i>
+                </a>
+              {% endif %}
+            </div>
+            <div style="color: #555; line-height: 1.5; margin-left: 52px;">
+              {{ comment.body|linebreaks }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 40px; color: #666;">
+        <i class="material-icons" style="font-size: 48px; color: #ddd;">comment</i>
+        <h6 style="color: #999; margin-top: 10px;">No comments yet</h6>
+        <p>Be the first to comment on this review!</p>
+      </div>
+    {% endif %}
+
+    <!-- Comment Form -->
+    {% if current_user %}
+      <div class="comment-form">
+        <h6 style="margin-bottom: 15px; color: #555;">
+          <i class="material-icons tiny" style="vertical-align: middle;">add_comment</i>
+          Add a comment
+        </h6>
+        <form method="post" action="">
+          {% csrf_token %}
+          <textarea name="body" class="comment-textarea" placeholder="Share your thoughts about this review..." required></textarea>
+          <button type="submit" class="submit-comment-btn">
+            <i class="material-icons left" style="margin-right: 5px;">send</i>
+            Post Comment
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+        <p style="color: #666; margin-bottom: 15px;">Please log in to leave a comment</p>
+        <a href="{% url 'login' %}" class="btn waves-effect waves-light">Login</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

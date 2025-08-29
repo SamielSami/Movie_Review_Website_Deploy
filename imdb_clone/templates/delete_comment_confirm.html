@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .delete-confirmation-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+  }
+  
+  .warning-card {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+    text-align: center;
+  }
+  
+  .comment-context-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+  }
+  
+  .comment-preview {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 4px solid #ff9800;
+    position: relative;
+  }
+  
+  .review-context {
+    background: #e3f2fd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border-left: 3px solid #2196f3;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  
+  .delete-btn {
+    background: linear-gradient(45deg, #ff9800, #f57c00);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 25px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  }
+  
+  .delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+  }
+  
+  .cancel-btn {
+    background: linear-gradient(45deg, #757575, #616161);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 25px;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(117, 117, 117, 0.3);
+  }
+  
+  .cancel-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(117, 117, 117, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+</style>
+
+<div class="delete-confirmation-container">
+  <!-- Warning Header -->
+  <div class="warning-card">
+    <i class="material-icons" style="font-size: 40px; margin-bottom: 10px;">chat_bubble</i>
+    <h5 style="margin: 0; font-weight: bold;">Delete Comment</h5>
+    <p style="margin: 8px 0 0 0; opacity: 0.9;">Remove your comment permanently</p>
+  </div>
+
+  <!-- Comment Context -->
+  <div class="comment-context-card">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+      <div style="flex-shrink: 0;">
+        <img src="{{ movie.Poster.url }}" alt="{{ movie.Title }}" style="width: 60px; height: 90px; border-radius: 6px; object-fit: cover;">
+      </div>
+      <div style="flex: 1;">
+        <h6 style="margin: 0 0 5px 0; color: #333;">{{ movie.Title }}</h6>
+        <p style="margin: 0; color: #666; font-size: 0.9em;">{{ movie.Type|title }} • {{ movie.Year }}</p>
+      </div>
+    </div>
+
+    <div class="review-context">
+      <h6 style="color: #1976d2; margin-bottom: 8px; font-size: 0.9em;">
+        <i class="material-icons tiny" style="vertical-align: middle;">rate_review</i>
+        Comment on review by {{ comment.review.user.first_name }} {{ comment.review.user.last_name }}
+      </h6>
+      <p style="margin: 0; color: #555; font-size: 0.9em;">
+        Rating: {{ comment.review.rate }}/10
+      </p>
+    </div>
+
+    <h6 style="color: #666; margin: 20px 0 10px 0;">
+      <i class="material-icons tiny" style="vertical-align: middle;">delete</i>
+      Your Comment to Delete:
+    </h6>
+
+    <div class="comment-preview">
+      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+        {% if comment.user.profile.picture %}
+          <img src="{{ comment.user.profile.picture.url }}" alt="" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+          <img src="{% static 'img/no_avatar.jpg' %}" alt="" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+        {% endif %}
+        <div style="flex: 1;">
+          <strong style="color: #333; font-size: 0.9em;">{{ comment.user.first_name }} {{ comment.user.last_name }}</strong>
+          <span style="color: #666; font-size: 0.8em; margin-left: 8px;">@{{ comment.user.username }}</span>
+          <div style="color: #999; font-size: 0.7em; margin-top: 2px;">{{ comment.date|date:"M d, Y H:i" }}</div>
+        </div>
+      </div>
+      
+      <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; margin-left: 47px;">
+        <p style="margin: 0; color: #333; line-height: 1.5; font-style: italic;">
+          "{{ comment.body }}"
+        </p>
+      </div>
+    </div>
+
+    <div style="background: #fffbf0; border-radius: 8px; padding: 12px; margin-top: 20px; border: 1px solid #ffc107;">
+      <div style="display: flex; align-items: center; gap: 8px; color: #f57c00;">
+        <i class="material-icons" style="font-size: 18px;">info</i>
+        <span style="font-weight: 500; font-size: 0.9em;">This action cannot be undone</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <form method="post" action="{% url 'delete-comment' comment.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="delete-btn">
+          <i class="material-icons left" style="margin-right: 5px; font-size: 18px;">delete</i>
+          Delete Comment
+        </button>
+      </form>
+      
+      <a href="{% url 'movie-details' movie.imdbID %}" class="cancel-btn">
+        <i class="material-icons" style="font-size: 18px;">arrow_back</i>
+        Cancel
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
