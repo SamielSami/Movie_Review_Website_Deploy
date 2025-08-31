@@ -1,0 +1,68 @@
+{% if new_badges %}
+<div class="badge-notification" id="badgeNotification" style="position: fixed; top: 20px; right: 20px; z-index: 1000; max-width: 400px;">
+  {% for badge in new_badges %}
+  <div class="card-panel" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; margin-bottom: 10px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); animation: slideIn 0.5s ease-out;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <div style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+        <i class="material-icons" style="color: {{ badge.color }}; font-size: 24px;">{{ badge.icon }}</i>
+      </div>
+      <div style="flex: 1;">
+        <h6 style="margin: 0 0 5px 0; font-weight: bold;">🎉 New Badge Earned!</h6>
+        <p style="margin: 0; font-size: 14px;"><strong>{{ badge.name }}</strong></p>
+        <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">{{ badge.description }}</p>
+      </div>
+      <button onclick="closeBadgeNotification()" style="background: none; border: none; color: white; cursor: pointer; padding: 5px;">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<style>
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.badge-notification {
+  animation: slideIn 0.5s ease-out;
+}
+</style>
+
+<script>
+function closeBadgeNotification() {
+  const notification = document.getElementById('badgeNotification');
+  if (notification) {
+    notification.style.animation = 'slideOut 0.5s ease-in forwards';
+    setTimeout(() => {
+      notification.remove();
+    }, 500);
+  }
+}
+
+// Auto-hide notification after 5 seconds
+setTimeout(() => {
+  closeBadgeNotification();
+}, 5000);
+</script>
+
+<style>
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+</style>
+{% endif %}

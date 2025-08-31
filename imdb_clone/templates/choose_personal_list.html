@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+/* Modern Dark Theme Styles */
+html, body {
+    background: linear-gradient(180deg, #1a212e 0%, #162b3e 50%, #0f5060 100%);
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Override any existing backgrounds */
+.container {
+    background: transparent;
+}
+
+.section {
+    background: transparent;
+}
+
+.modern-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #64b5f6, #42a5f5, #2196f3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.movie-info-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-poster {
+    width: 80px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.movie-details h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.movie-details p {
+    color: #b0bec5;
+    font-size: 1rem;
+    margin: 5px 0;
+}
+
+.lists-section {
+    margin-top: 30px;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.list-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.list-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #64b5f6, #42a5f5, #2196f3);
+}
+
+.list-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-color: rgba(100, 181, 246, 0.3);
+}
+
+.list-card.selected {
+    border-color: #9c27b0;
+    background: rgba(156, 39, 176, 0.1);
+}
+
+.list-card.selected::before {
+    background: linear-gradient(90deg, #9c27b0, #e91e63);
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.list-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    margin-right: 15px;
+}
+
+.list-info {
+    flex: 1;
+}
+
+.list-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.list-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+}
+
+.movie-count {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.privacy-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.privacy-badge.private {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.privacy-badge.public {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.checkbox-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #26a69a;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-cancel {
+    padding: 12px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    background: transparent;
+    color: #b0bec5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.btn-add {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add:hover {
+    background: linear-gradient(45deg, #00bcd4, #26a69a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+}
+
+.btn-add:disabled {
+    background: rgba(255, 255, 255, 0.2);
+    color: #b0bec5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #b0bec5;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.empty-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.create-list-btn {
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.create-list-btn:hover {
+    background: linear-gradient(45deg, #00bcd4, #26a69a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+    color: white;
+}
+
+/* List icons and colors for variety */
+.list-icons {
+    display: none;
+}
+</style>
+
+<div class="modern-container">
+    <div class="page-header">
+        <h1 class="page-title">Add to Personal Lists</h1>
+    </div>
+
+    <!-- Movie Info Card -->
+    <div class="movie-info-card">
+        <img src="{{ movie.Poster.url }}" alt="{{ movie.Title }}" class="movie-poster">
+        <div class="movie-details">
+            <h3>{{ movie.Title }}</h3>
+            <p><i class="material-icons tiny">date_range</i> {{ movie.Year }}</p>
+            <p><i class="material-icons tiny">movie</i> {{ movie.Type }}</p>
+        </div>
+    </div>
+
+    <!-- Lists Section -->
+    <div class="lists-section">
+        <h2 class="section-title">Select Lists to Add Movie</h2>
+        
+        <form method="post" id="addToListForm">
+            {% csrf_token %}
+            
+            {% if lists %}
+            <div class="lists-grid">
+                {% for l in lists %}
+                <div class="list-card" onclick="toggleListSelection(this, {{ l.id }})">
+                    <div class="checkbox-container">
+                        <input type="checkbox" name="list_ids" value="{{ l.id }}" id="list_{{ l.id }}">
+                    </div>
+                    <div class="list-header">
+                        <div class="list-icon" style="background: linear-gradient(45deg, {{ l.icon_color_1|default:'#FF6B6B' }}, {{ l.icon_color_2|default:'#FF8E8E' }});">
+                            <i class="material-icons">{{ l.icon|default:'favorite' }}</i>
+                        </div>
+                        <div class="list-info">
+                            <div class="list-name">{{ l.name }}</div>
+                            <div class="list-meta">
+                                <span class="movie-count">{{ l.movies.count }} movies</span>
+                                <span class="privacy-badge {% if l.is_private %}private{% else %}public{% endif %}">
+                                    <i class="material-icons" style="font-size: 14px;">
+                                        {% if l.is_private %}lock{% else %}public{% endif %}
+                                    </i>
+                                    {% if l.is_private %}Private{% else %}Public{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="material-icons">playlist_add</i>
+                </div>
+                <div class="empty-title">No personal lists yet</div>
+                <div class="empty-text">Create your first list to start organizing your favorite movies!</div>
+                <a href="{% url 'personal-lists' user.username %}" class="create-list-btn">
+                    <i class="material-icons">add</i>
+                    Create Your First List
+                </a>
+            </div>
+            {% endif %}
+
+            {% if lists %}
+            <div class="form-actions">
+                <a href="{% url 'movie-details' movie.imdbID %}" class="btn-cancel">
+                    <i class="material-icons">arrow_back</i>
+                    Cancel
+                </a>
+                <button type="submit" class="btn-add" id="submitBtn">
+                    <i class="material-icons">playlist_add</i>
+                    Add to Selected Lists
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+// List icons and colors for variety
+const listIcons = [
+    'favorite', 'star', 'movie', 'local_movies', 'theaters', 'video_library',
+    'playlist_play', 'queue_music', 'bookmark', 'bookmark_border', 'flag',
+    'label', 'tag', 'category', 'folder', 'folder_special'
+];
+
+const iconColors = [
+    ['#FF6B6B', '#FF8E8E'], ['#4ECDC4', '#6EE7DF'], ['#45B7D1', '#67C9E1'],
+    ['#96CEB4', '#B8E0C8'], ['#FFEAA7', '#FFF2C7'], ['#DDA0DD', '#E6B3E6'],
+    ['#98D8C8', '#B8E8D8'], ['#F7DC6F', '#F9E79F'], ['#BB8FCE', '#D2B4DE'],
+    ['#85C1E9', '#A7D3F0'], ['#F8C471', '#FAD7A0'], ['#82E0AA', '#A3E8C1']
+];
+
+function toggleListSelection(card, listId) {
+    const checkbox = document.getElementById('list_' + listId);
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        card.classList.add('selected');
+    } else {
+        card.classList.remove('selected');
+    }
+    
+    updateSubmitButton();
+}
+
+function updateSubmitButton() {
+    const checkboxes = document.querySelectorAll('input[name="list_ids"]:checked');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (checkboxes.length > 0) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="material-icons">playlist_add</i>Add to ${checkboxes.length} List${checkboxes.length > 1 ? 's' : ''}`;
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="material-icons">playlist_add</i>Add to Selected Lists`;
+    }
+}
+
+// Add random icons and colors to list cards
+document.addEventListener('DOMContentLoaded', function() {
+    const listCards = document.querySelectorAll('.list-card');
+    listCards.forEach((card, index) => {
+        const icon = listIcons[index % listIcons.length];
+        const colors = iconColors[index % iconColors.length];
+        
+        const iconElement = card.querySelector('.list-icon i');
+        if (iconElement) {
+            iconElement.textContent = icon;
+        }
+        
+        const iconContainer = card.querySelector('.list-icon');
+        if (iconContainer) {
+            iconContainer.style.background = `linear-gradient(45deg, ${colors[0]}, ${colors[1]})`;
+        }
+    });
+    
+    // Initialize submit button state
+    updateSubmitButton();
+});
+
+// Handle form submission
+document.getElementById('addToListForm').addEventListener('submit', function(e) {
+    const checkboxes = document.querySelectorAll('input[name="list_ids"]:checked');
+    if (checkboxes.length === 0) {
+        e.preventDefault();
+        alert('Please select at least one list to add the movie to.');
+        return;
+    }
+});
+</script>
+
+{% endblock %}

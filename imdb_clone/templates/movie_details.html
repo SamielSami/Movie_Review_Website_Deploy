@@ -144,6 +144,11 @@
                   <button class="waves-effect waves-light btn disabled">
                     <i class="material-icons left">playlist_add_checked</i>Already Watched
                   </button>
+                  {% if current_user %}
+                    <a href="{% url 'add-to-personal-list' movie_data.imdbID %}" class="waves-effect waves-light btn">
+                      <i class="material-icons left">playlist_add</i>Add to Personal List
+                    </a>
+                  {% endif %}
                 {% else %}
                   <a href="{% url 'add-movies-watched' movie_data.imdbID %}" class="waves-effect waves-light btn">
                     <i class="material-icons left">playlist_add_checked</i>Watched

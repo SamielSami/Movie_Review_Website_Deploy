@@ -43,9 +43,30 @@ class Profile(models.Model):
 	def __str__(self):
 		return self.user.username
 
+
+class PersonalList(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='personal_lists')
+	name = models.CharField(max_length=60)
+	movies = models.ManyToManyField(Movie, related_name='in_personal_lists', blank=True)
+	is_private = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		unique_together = [('user', 'name')]
+		ordering = ['-created_at']
+
+	def __str__(self):
+		return f"{self.name} (@{self.user.username})"
+
+	@property
+	def items_count(self):
+		return self.movies.count()
+
+
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		Profile.objects.create(user=instance)
+
 
 def save_user_profile(sender, instance, **kwargs):
 	instance.profile.save()

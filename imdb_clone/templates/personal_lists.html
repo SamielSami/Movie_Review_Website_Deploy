@@ -1,0 +1,765 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+
+html, body {
+    background: linear-gradient(180deg, #1a212e 0%, #162b3e 50%, #0f5060 100%);
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    background: transparent;
+}
+
+.section {
+    background: transparent;
+}
+
+.modern-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header-top {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.header-top .btn {
+    background: linear-gradient(45deg, #2196f3, #1976d2);
+    border-radius: 25px;
+    padding: 0 20px;
+    height: 40px;
+    line-height: 40px;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    transition: all 0.3s ease;
+}
+
+.header-top .btn:hover {
+    background: linear-gradient(45deg, #1976d2, #1565c0);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #64b5f6, #42a5f5, #2196f3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.stats-counter {
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    padding: 8px 20px;
+    border-radius: 25px;
+    display: inline-block;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+}
+
+.lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.list-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.list-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #64b5f6, #42a5f5, #2196f3);
+}
+
+.list-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(100, 181, 246, 0.3);
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.list-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    margin-right: 15px;
+}
+
+.list-info {
+    flex: 1;
+}
+
+.list-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.list-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+}
+
+.movie-count {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.privacy-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.privacy-badge.private {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.privacy-badge.public {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.list-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #2196f3, #1976d2);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #1976d2, #1565c0);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #d32f2f, #c62828);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+}
+
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(38, 166, 154, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(38, 166, 154, 0.6);
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #b0bec5;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #64b5f6;
+    box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+}
+
+.char-counter {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #b0bec5;
+    margin-top: 5px;
+}
+
+.switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.switch-container .form-label {
+    margin-bottom: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-cancel {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    background: transparent;
+    color: #b0bec5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.btn-create {
+    flex: 2;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-create:hover {
+    background: linear-gradient(45deg, #00bcd4, #26a69a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #b0bec5;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.empty-text {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: white;
+    font-weight: 500;
+    z-index: 3000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    border-left: 4px solid #4caf50;
+}
+
+.toast.error {
+    border-left: 4px solid #f44336;
+}
+
+/* Delete Modal Styles */
+.modal-body {
+    margin-bottom: 25px;
+}
+
+.modal-body p {
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.warning-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ff6b6b !important;
+    font-weight: 500;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 3px solid #ff6b6b;
+}
+
+.warning-text i {
+    font-size: 20px;
+}
+
+.btn-delete {
+    flex: 2;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: linear-gradient(45deg, #d32f2f, #c62828);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+}
+</style>
+
+<div class="modern-container">
+    <div class="page-header">
+        <div class="header-top">
+            <a href="{% url 'profile' profile.user.username %}" class="btn waves-effect waves-light blue">
+                <i class="material-icons left">arrow_back</i>
+                Back to Profile
+            </a>
+        </div>
+        <h1 class="page-title">{{ profile.user.username }}'s Personal Lists</h1>
+        <div class="stats-counter">
+            {{ lists|length }} of 5 lists created
+        </div>
+    </div>
+
+    {% if lists %}
+    <div class="lists-grid">
+        {% for list in lists %}
+        <div class="list-card">
+            <div class="list-header">
+                <div class="list-icon">
+                    <i class="material-icons">favorite</i>
+                </div>
+                <div class="list-info">
+                    <div class="list-name">{{ list.name }}</div>
+                    <div class="list-meta">
+                        <span class="movie-count">{{ list.items_count }} movies</span>
+                        <span class="privacy-badge {% if list.is_private %}private{% else %}public{% endif %}">
+                            <i class="material-icons" style="font-size: 14px;">
+                                {% if list.is_private %}lock{% else %}public{% endif %}
+                            </i>
+                            {% if list.is_private %}Private{% else %}Public{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="list-actions">
+                <a href="{% url 'personal-list-detail' profile.user.username list.id %}" class="action-btn btn-primary">
+                    <i class="material-icons">visibility</i>
+                    View
+                </a>
+                <button class="action-btn btn-danger" onclick="deleteList({{ list.id }}, '{{ list.name }}')">
+                    <i class="material-icons">delete</i>
+                    Delete
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="material-icons">playlist_add</i>
+        </div>
+        <div class="empty-title">No personal lists yet</div>
+        <div class="empty-text">Create your first list to start organizing your favorite movies!</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Floating Action Button -->
+<button class="fab" onclick="openCreateModal()">
+    <i class="material-icons">add</i>
+</button>
+
+<!-- Create List Modal -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Create New List</h2>
+        </div>
+        <form id="createListForm" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">List Name</label>
+                <input type="text" name="name" id="listName" class="form-input" maxlength="60" required>
+                <div class="char-counter">
+                    <span id="charCount">0</span>/60
+                </div>
+            </div>
+            <div class="switch-container">
+                <label class="form-label">Private List</label>
+                <div class="switch">
+                    <label>
+                        <input type="checkbox" name="is_private" id="isPrivate">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeCreateModal()">Cancel</button>
+                <button type="submit" class="btn-create">Create List</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Delete List</h2>
+        </div>
+        <div class="modal-body">
+            <p id="deleteMessage">Are you sure you want to delete this list?</p>
+            <p class="warning-text"><i class="material-icons">warning</i> This action cannot be undone.</p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button type="button" class="btn-delete" id="confirmDelete">Delete List</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// List icons and colors for variety
+const listIcons = [
+    'favorite', 'star', 'movie', 'local_movies', 'theaters', 'video_library',
+    'playlist_play', 'queue_music', 'bookmark', 'bookmark_border', 'flag',
+    'label', 'tag', 'category', 'folder', 'folder_special'
+];
+
+const iconColors = [
+    ['#FF6B6B', '#FF8E8E'], ['#4ECDC4', '#6EE7DF'], ['#45B7D1', '#67C9E1'],
+    ['#96CEB4', '#B8E0C8'], ['#FFEAA7', '#FFF2C7'], ['#DDA0DD', '#E6B3E6'],
+    ['#98D8C8', '#B8E8D8'], ['#F7DC6F', '#F9E79F'], ['#BB8FCE', '#D2B4DE'],
+    ['#85C1E9', '#A7D3F0'], ['#F8C471', '#FAD7A0'], ['#82E0AA', '#A3E8C1']
+];
+
+// Character counter
+document.getElementById('listName').addEventListener('input', function() {
+    const count = this.value.length;
+    document.getElementById('charCount').textContent = count;
+});
+
+
+
+// Modal functions
+function openCreateModal() {
+    const currentListCount = {{ lists|length }};
+    if (currentListCount >= 5) {
+        showToast('Maximum limit of 5 lists reached!', 'error');
+        return;
+    }
+    document.getElementById('createModal').style.display = 'flex';
+    document.getElementById('listName').focus();
+}
+
+function closeCreateModal() {
+    document.getElementById('createModal').style.display = 'none';
+    document.getElementById('createListForm').reset();
+    document.getElementById('charCount').textContent = '0';
+}
+
+// Close modal when clicking outside
+document.getElementById('createModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCreateModal();
+    }
+});
+
+// Form submission
+document.getElementById('createListForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const name = formData.get('name').trim();
+    const isPrivate = formData.get('is_private') === 'on';
+    
+    if (!name) {
+        showToast('Please enter a list name', 'error');
+        return;
+    }
+    
+    // Submit form
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(() => {
+        showToast('List created successfully!', 'success');
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    })
+    .catch(() => {
+        showToast('Error creating list', 'error');
+    });
+});
+
+// Delete list function
+function deleteList(listId, listName) {
+    // Set the message in the modal
+    document.getElementById('deleteMessage').textContent = `Are you sure you want to delete "${listName}"?`;
+    
+    // Store the list ID for the confirmation
+    document.getElementById('confirmDelete').setAttribute('data-list-id', listId);
+    document.getElementById('confirmDelete').setAttribute('data-list-name', listName);
+    
+    // Open the modal
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+// Close delete modal
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Handle delete confirmation
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modal when clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+    
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        const listId = this.getAttribute('data-list-id');
+        const listName = this.getAttribute('data-list-name');
+        
+        // Close the modal
+        closeDeleteModal();
+        
+        // Perform the delete
+        fetch(`/account/u/lists/${listId}/delete`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                showToast('List deleted successfully!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showToast('Error deleting list', 'error');
+            }
+        })
+        .catch(() => {
+            showToast('Error deleting list', 'error');
+        });
+    });
+});
+
+// Toast notification
+function showToast(message, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Add random icons and colors to list cards
+document.addEventListener('DOMContentLoaded', function() {
+    const listCards = document.querySelectorAll('.list-card');
+    listCards.forEach((card, index) => {
+        const icon = listIcons[index % listIcons.length];
+        const colors = iconColors[index % iconColors.length];
+        
+        const iconElement = card.querySelector('.list-icon i');
+        if (iconElement) {
+            iconElement.textContent = icon;
+        }
+        
+        const iconContainer = card.querySelector('.list-icon');
+        if (iconContainer) {
+            iconContainer.style.background = `linear-gradient(45deg, ${colors[0]}, ${colors[1]})`;
+        }
+    });
+});
+</script>
+
+{% endblock %}

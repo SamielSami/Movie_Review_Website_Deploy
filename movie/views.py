@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.utils.text import slugify
 from django.core.paginator import Paginator
@@ -10,6 +10,7 @@ from movie.models import Movie, Genre, Rating, Review
 from actor.models import Actor
 from authy.models import Profile
 from django.contrib.auth.models import User
+from gamification.services import award_points
 
 
 from movie.forms import RateForm
@@ -242,6 +243,9 @@ def addMoviesWatched(request, imdb_id):
 	user = request.user
 	profile = Profile.objects.get(user=user)
 
+	was_already_watched = profile.watched.filter(imdbID=imdb_id).exists()
+
+
 	if profile.to_watch.filter(imdbID=imdb_id).exists():
 		profile.to_watch.remove(movie)
 		profile.watched.add(movie)
@@ -249,7 +253,94 @@ def addMoviesWatched(request, imdb_id):
 	else:
 		profile.watched.add(movie)
 
+	# Award points for watching a movie (only if not already watched)
+	if not was_already_watched:
+		award_points(user, 'watch_movie', f"Watched {movie.Title}", movie.imdbID)
+	
 	return HttpResponseRedirect(reverse('movie-details', args=[imdb_id]))
+
+def removeFromWatchlist(request, imdb_id):
+	movie = Movie.objects.get(imdbID=imdb_id)
+	user = request.user
+	profile = Profile.objects.get(user=user)
+
+	profile.to_watch.remove(movie)
+
+	# Redirect back to the watchlist page
+	return HttpResponseRedirect(reverse('profile-watch-list', args=[user.username]))
+
+def removeFromWatchlistAjax(request, imdb_id):
+	"""AJAX endpoint to remove movie from watchlist without page redirect"""
+	if request.method == 'POST':
+		try:
+			movie = Movie.objects.get(imdbID=imdb_id)
+			user = request.user
+			profile = Profile.objects.get(user=user)
+			
+			# Remove from watchlist
+			profile.to_watch.remove(movie)
+			
+			return JsonResponse({
+				'success': True,
+				'message': f'"{movie.Title}" has been removed from your watchlist.',
+				'movie_title': movie.Title
+			})
+		except Movie.DoesNotExist:
+			return JsonResponse({
+				'success': False,
+				'message': 'Movie not found.'
+			}, status=404)
+		except Exception as e:
+			return JsonResponse({
+				'success': False,
+				'message': 'An error occurred while removing the movie.'
+			}, status=500)
+	
+	return JsonResponse({
+		'success': False,
+		'message': 'Invalid request method.'
+	}, status=405)
+
+
+def markAsWatchedAjax(request, imdb_id):
+	"""AJAX endpoint to mark movie/series as watched and move to appropriate list"""
+	if request.method == 'POST':
+		try:
+			movie = Movie.objects.get(imdbID=imdb_id)
+			user = request.user
+			profile = Profile.objects.get(user=user)
+			
+			# Remove from watchlist
+			profile.to_watch.remove(movie)
+			
+			# Add to watched list
+			profile.watched.add(movie)
+			
+			# Determine which list it was moved to
+			list_name = "Movies Watched" if movie.Type.lower() == "movie" else "Series Watched"
+			
+			return JsonResponse({
+				'success': True,
+				'message': f'"{movie.Title}" has been marked as watched and moved to {list_name}.',
+				'movie_title': movie.Title,
+				'list_name': list_name,
+				'content_type': movie.Type
+			})
+		except Movie.DoesNotExist:
+			return JsonResponse({
+				'success': False,
+				'message': 'Movie not found.'
+			}, status=404)
+		except Exception as e:
+			return JsonResponse({
+				'success': False,
+				'message': 'An error occurred while marking as watched.'
+			}, status=500)
+	
+	return JsonResponse({
+		'success': False,
+		'message': 'Invalid request method.'
+	}, status=405)
 
 
 def Rate(request, imdb_id):
@@ -278,6 +369,11 @@ def Rate(request, imdb_id):
 				rate.user = user
 				rate.movie = movie
 				rate.save()
+
+				# Award points for rating a movie (Sadia's)
+				award_points(user, 'rate_movie', f"Rated {movie.Title}", movie.imdbID)
+				
+
 				return HttpResponseRedirect(reverse('movie-details', args=[imdb_id]))
 		else:
 			form = RateForm()

@@ -32,6 +32,7 @@ urlpatterns = [
     path('actors/', include('actor.urls')),
     path('account/', include('authy.urls')),
     path('comment/', include('comment.urls')),
+    path('gamification/', include('gamification.urls')),
     path('<username>/', UserProfile, name='profile'),
     path('<username>/movieswatched', UserProfileMoviesWatched, name='profile-movies-watched'),
     path('<username>/serieswatched', UserProfileSeriesWatched, name='profile-series-watched'),

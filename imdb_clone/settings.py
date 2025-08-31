@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'actor',
     'authy',
     'comment',
+    'gamification',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,646 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+/* Modern Dark Theme Styles */
+html, body {
+    background: linear-gradient(180deg, #1a212e 0%, #162b3e 50%, #0f5060 100%);
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Override any existing backgrounds */
+.container {
+    background: transparent;
+}
+
+.section {
+    background: transparent;
+}
+
+.modern-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #64b5f6, #42a5f5, #2196f3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.back-btn {
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.back-btn:hover {
+    background: linear-gradient(45deg, #00bcd4, #26a69a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+    color: white;
+}
+
+.count-badge {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.movie-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-color: rgba(100, 181, 246, 0.3);
+}
+
+.movie-poster {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: all 0.3s ease;  
+}
+
+.movie-card:hover .movie-poster {
+    transform: scale(1.05);
+}
+
+.movie-content {
+    padding: 20px;
+}
+
+.movie-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.movie-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+}
+
+.movie-year {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.movie-type {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-remove {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #f44336, #e91e63);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.btn-remove:hover {
+    background: linear-gradient(45deg, #e91e63, #f44336);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+    color: white;
+}
+
+.btn-watched {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #4caf50, #66bb6a);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.btn-watched:hover {
+    background: linear-gradient(45deg, #66bb6a, #4caf50);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #b0bec5;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.empty-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.pagination-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.pagination-btn {
+    background: linear-gradient(45deg, #26a69a, #00bcd4);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+.pagination-btn:hover {
+    background: linear-gradient(45deg, #00bcd4, #26a69a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+    color: white;
+}
+
+.pagination-info {
+    color: #b0bec5;
+    margin: 0 20px;
+    font-weight: 500;
+}
+
+/* Modern Popup Styles */
+.modern-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    color: white;
+    z-index: 1000;
+    max-width: 300px;
+    font-family: inherit;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.modern-popup.show {
+    transform: translateX(0);
+}
+
+.popup-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.popup-icon {
+    font-size: 24px;
+}
+
+.popup-text h6 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.popup-text p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+</style>
+
+<div class="modern-container">
+    <!-- Back Button -->
+    <a href="{% url 'profile' profile.user.username %}" class="back-btn">
+        <i class="material-icons">arrow_back</i>
+        Back to Profile
+    </a>
+
+    <div class="page-header">
+        <h1 class="page-title">{{ profile.user.username }}'s Watchlist</h1>
+    </div>
+
+    <!-- Watchlist Count -->
+    <div style="text-align: center;">
+        <span class="count-badge">
+            <i class="material-icons">playlist_play</i>
+            {{ movies|length }} item{{ movies|length|pluralize }} in watchlist
+        </span>
+    </div>
+
+    <!-- Movies Grid -->
+    {% if movies %}
+    <div class="movies-grid">
+        {% for movie in movies %}
+        <div class="movie-card">
+            <img src="{{ movie.Poster.url }}" alt="{{ movie.Title }}" class="movie-poster">
+            <div class="movie-content">
+                <div class="movie-title">{{ movie.Title }}</div>
+                <div class="movie-meta">
+                    <span class="movie-year">
+                        <i class="material-icons" style="font-size: 16px;">date_range</i>
+                        {{ movie.Year }}
+                    </span>
+                    <span class="movie-type">{{ movie.Type }}</span>
+                </div>
+                {% if user.is_authenticated and user == profile.user %}
+                <div class="movie-actions">
+                    <a href="#" class="btn-watched mark-watched-btn" data-movie-title="{{ movie.Title }}" data-imdb-id="{{ movie.imdbID }}" data-movie-type="{{ movie.Type }}">
+                        <i class="material-icons" style="font-size: 16px;">check_circle</i>
+                        Mark as Watched
+                    </a>
+                    <a href="#" class="btn-remove remove-watchlist-btn" data-movie-title="{{ movie.Title }}" data-imdb-id="{{ movie.imdbID }}">
+                        <i class="material-icons" style="font-size: 16px;">remove_circle</i>
+                        Remove
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="material-icons">playlist_play</i>
+        </div>
+        <div class="empty-title">Your watchlist is empty</div>
+        <div class="empty-text">Add movies to your watchlist to see them here!</div>
+    </div>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if movies.has_previous or movies.has_next %}
+    <div class="pagination-container">
+        {% if movies.has_previous %}
+            <a href="?page={{ movies.previous_page_number }}" class="pagination-btn">
+                <i class="material-icons">arrow_back</i>
+                Previous
+            </a>
+        {% endif %}
+        
+        <span class="pagination-info">
+            Page {{ movies.number }} of {{ movies.paginator.num_pages }}
+        </span>
+        
+        {% if movies.has_next %}
+            <a href="?page={{ movies.next_page_number }}" class="pagination-btn">
+                Next
+                <i class="material-icons">arrow_forward</i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modern Popup Dialog for Remove Confirmation -->
+<div id="remove-popup" class="modern-popup">
+    <div class="popup-content">
+        <i class="material-icons popup-icon">check_circle</i>
+        <div class="popup-text">
+            <h6>Movie Removed!</h6>
+            <p id="popup-message">The movie has been removed from your watchlist.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for remove buttons
+    const removeButtons = document.querySelectorAll('.remove-watchlist-btn');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const movieTitle = this.getAttribute('data-movie-title');
+            const imdbId = this.getAttribute('data-imdb-id');
+            
+            // Show popup first
+            showRemovePopup(movieTitle);
+            
+            // Then make AJAX request to remove the movie
+            removeMovieFromWatchlist(imdbId, this);
+        });
+    });
+
+    // Add click handlers for mark as watched buttons
+    const markWatchedButtons = document.querySelectorAll('.mark-watched-btn');
+    markWatchedButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const movieTitle = this.getAttribute('data-movie-title');
+            const imdbId = this.getAttribute('data-imdb-id');
+            const movieType = this.getAttribute('data-movie-type');
+            
+            // Show popup first
+            showMarkWatchedPopup(movieTitle, movieType);
+            
+            // Then make AJAX request to mark as watched
+            markMovieAsWatched(imdbId, this);
+        });
+    });
+});
+
+function removeMovieFromWatchlist(imdbId, buttonElement) {
+    fetch(`/movie/${imdbId}/removefromwatchlist-ajax`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Remove the movie card from the DOM with animation
+            const movieCard = buttonElement.closest('.movie-card');
+            if (movieCard) {
+                movieCard.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                movieCard.style.opacity = '0';
+                movieCard.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    movieCard.remove();
+                    
+                    // Update count badge
+                    updateCountBadge();
+                    
+                    // Check if no movies left and show empty state
+                    const remainingMovies = document.querySelectorAll('.movie-card');
+                    if (remainingMovies.length === 0) {
+                        showEmptyState();
+                    }
+                }, 500);
+            }
+        } else {
+            // Show error popup
+            showErrorPopup(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorPopup('An error occurred while removing the movie.');
+    });
+}
+
+function markMovieAsWatched(imdbId, buttonElement) {
+    fetch(`/movie/${imdbId}/markaswatched-ajax`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Remove the movie card from the DOM with animation
+            const movieCard = buttonElement.closest('.movie-card');
+            if (movieCard) {
+                movieCard.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                movieCard.style.opacity = '0';
+                movieCard.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    movieCard.remove();
+                    
+                    // Update count badge
+                    updateCountBadge();
+                    
+                    // Check if no movies left and show empty state
+                    const remainingMovies = document.querySelectorAll('.movie-card');
+                    if (remainingMovies.length === 0) {
+                        showEmptyState();
+                    }
+                }, 500);
+            }
+        } else {
+            // Show error popup
+            showErrorPopup(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorPopup('An error occurred while marking as watched.');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showRemovePopup(movieTitle) {
+    const popup = document.getElementById('remove-popup');
+    const message = document.getElementById('popup-message');
+    const icon = popup.querySelector('.popup-icon');
+    
+    // Reset to success styling
+    popup.style.borderLeft = '4px solid #4caf50';
+    icon.textContent = 'check_circle';
+    popup.querySelector('h6').textContent = 'Movie Removed!';
+    
+    if (movieTitle) {
+        message.textContent = `"${movieTitle}" has been removed from your watchlist.`;
+    } else {
+        message.textContent = 'The movie has been removed from your watchlist.';
+    }
+    
+    popup.classList.add('show');
+    
+    // Hide after 2 seconds
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 2000);
+}
+
+function showMarkWatchedPopup(movieTitle, movieType) {
+    const popup = document.getElementById('remove-popup');
+    const message = document.getElementById('popup-message');
+    const icon = popup.querySelector('.popup-icon');
+    
+    // Set to watched styling
+    popup.style.borderLeft = '4px solid #4caf50';
+    icon.textContent = 'check_circle';
+    popup.querySelector('h6').textContent = 'Marked as Watched!';
+    
+    const listName = movieType.toLowerCase() === 'movie' ? 'Movies Watched' : 'Series Watched';
+    
+    if (movieTitle) {
+        message.textContent = `"${movieTitle}" has been marked as watched and moved to ${listName}.`;
+    } else {
+        message.textContent = `The item has been marked as watched and moved to ${listName}.`;
+    }
+    
+    popup.classList.add('show');
+    
+    // Hide after 3 seconds (longer for watched action)
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 3000);
+}
+
+function showErrorPopup(message) {
+    const popup = document.getElementById('remove-popup');
+    const messageElement = document.getElementById('popup-message');
+    const icon = popup.querySelector('.popup-icon');
+    const title = popup.querySelector('h6');
+    
+    // Change to error styling
+    popup.style.borderLeft = '4px solid #f44336';
+    icon.textContent = 'error';
+    title.textContent = 'Error!';
+    messageElement.textContent = message;
+    
+    popup.classList.add('show');
+    
+    // Hide after 3 seconds (longer for errors)
+    setTimeout(() => {
+        popup.classList.remove('show');
+        // Reset to success styling
+        popup.style.borderLeft = '4px solid #4caf50';
+        icon.textContent = 'check_circle';
+        title.textContent = 'Movie Removed!';
+    }, 3000);
+}
+
+function updateCountBadge() {
+    const movieCards = document.querySelectorAll('.movie-card');
+    const countBadge = document.querySelector('.count-badge');
+    if (countBadge) {
+        const count = movieCards.length;
+        countBadge.innerHTML = `<i class="material-icons">playlist_play</i> ${count} item${count > 1 ? 's' : ''} in watchlist`;
+    }
+}
+
+function showEmptyState() {
+    const moviesGrid = document.querySelector('.movies-grid');
+    if (moviesGrid) {
+        moviesGrid.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="material-icons">playlist_play</i>
+                </div>
+                <div class="empty-title">Your watchlist is empty</div>
+                <div class="empty-text">Add movies to your watchlist to see them here!</div>
+            </div>
+        `;
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.urls import path
-from movie.views import index, pagination, movieDetails, genres, addMoviesToWatch, addMoviesWatched, Rate, DeleteReview
+from movie.views import index, pagination, movieDetails, genres, addMoviesToWatch, addMoviesWatched, Rate, DeleteReview, removeFromWatchlist, removeFromWatchlistAjax, markAsWatchedAjax
 
 
 urlpatterns = [
@@ -8,6 +8,9 @@ urlpatterns = [
 	path('<imdb_id>', movieDetails, name='movie-details'),
 	path('<imdb_id>/addtomoviewatch', addMoviesToWatch, name='add-movies-to-watch'),
 	path('<imdb_id>/addmoviewatched', addMoviesWatched, name='add-movies-watched'),
+	path('<imdb_id>/removefromwatchlist', removeFromWatchlist, name='remove-from-watchlist'),
+	path('<imdb_id>/removefromwatchlist-ajax', removeFromWatchlistAjax, name='remove-from-watchlist-ajax'),
+	path('<imdb_id>/markaswatched-ajax', markAsWatchedAjax, name='mark-as-watched-ajax'),
 	path('genre/<slug:genre_slug>', genres, name='genres'),
 	path('<imdb_id>/rate', Rate, name='rate-movie'),
 	path('<imdb_id>/delete-review', DeleteReview, name='delete-review'),

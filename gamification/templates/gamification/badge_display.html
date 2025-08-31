@@ -1,0 +1,92 @@
+{% load static %}
+
+<style>
+.badge-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.badge-item-small {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.badge-item-small:hover {
+    transform: scale(1.05);
+}
+
+.badge-icon-small {
+    font-size: 1em;
+    margin-right: 4px;
+}
+
+.badge-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.badge-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.75em;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 5px;
+}
+
+.badge-tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+    margin-bottom: -5px;
+    z-index: 1000;
+}
+
+.badge-count {
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7em;
+    font-weight: bold;
+    margin-left: 5px;
+}
+</style>
+
+<div class="badge-display">
+    {% if user_badges %}
+        {% for user_badge in user_badges %}
+            <div class="badge-item-small badge-tooltip" data-tooltip="{{ user_badge.badge.name }}: {{ user_badge.badge.description }}">
+                <i class="material-icons badge-icon-small" style="color: {{ user_badge.badge.color }};">{{ user_badge.badge.icon }}</i>
+                {{ user_badge.badge.name }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <span style="color: #999; font-style: italic; font-size: 0.9em;">No badges yet</span>
+    {% endif %}
+</div>

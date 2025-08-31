@@ -64,7 +64,7 @@
 
           <li class="collection-item avatar">
             <i class="material-icons circle red">playlist_play</i>
-            <span class="title">Movies in watchlist</span>
+            <span class="title">Movies/Series in watchlist</span>
             <p class="center-align"><b>{{ watch_list_count }}</b></p>
             <a href="{% url 'profile-watch-list' profile.user.username %}" class="secondary-content"><b>Show list</b></a>
           </li>
@@ -76,7 +76,56 @@
             <a href="{% url 'profile-reviewed-list' profile.user.username %}" class="secondary-content"><b>Show list</b></a>
           </li>
 
+          <li class="collection-item avatar">
+            <i class="material-icons circle purple">list</i>
+            <span class="title">Personal Lists</span>
+            <p class="center-align"><b>{{ personal_list_count }}</b></p>
+            {% if user.is_authenticated and user == profile.user %}
+              <a href="{% url 'personal-lists' profile.user.username %}" class="secondary-content"><b>Manage</b></a>
+            {% else %}
+              <a href="{% url 'personal-lists' profile.user.username %}" class="secondary-content"><b>View</b></a>
+            {% endif %}
+          </li>
+          
+          <!-- Gamification Stats -->
+          <li class="collection-item avatar">
+            <i class="material-icons circle amber">emoji_events</i>
+            <span class="title">Total Points</span>
+            <p class="center-align"><b>{{ user_stats.total_points }}</b></p>
+            <a href="{% url 'gamification:user_profile' profile.user.username %}" class="secondary-content"><b>View Profile</b></a>
+          </li>
+
         </ul>
+
+        <!-- Badges Section -->
+        {% if user_badges %}
+        <div class="card-panel" style="margin-top: 20px;">
+          <h6 style="margin-top: 0; color: #333;">
+            <i class="material-icons left" style="color: #ffd700;">star</i>
+            Badges Earned ({{ user_badges|length }})
+          </h6>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+            {% for user_badge in user_badges|slice:":5" %}
+              <div class="chip" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                <i class="material-icons tiny" style="color: {{ user_badge.badge.color }};">{{ user_badge.badge.icon }}</i>
+                {{ user_badge.badge.name }}
+              </div>
+            {% endfor %}
+            {% if user_badges|length > 5 %}
+              <div class="chip grey">
+                +{{ user_badges|length|add:"-5" }} more
+              </div>
+            {% endif %}
+          </div>
+          {% if user_badges|length > 5 %}
+            <div style="margin-top: 10px;">
+              <a href="{% url 'gamification:user_profile' profile.user.username %}" class="btn-small waves-effect waves-light">
+                <i class="material-icons left">visibility</i>View All Badges
+              </a>
+            </div>
+          {% endif %}
+        </div>
+        {% endif %}
             </div>
             </div>        
         </div>
@@ -105,22 +154,6 @@
             </div>
           </div>
         {% endfor %}
-  {% else %}
-          {% for movie in movie_data %}
-          <div class="col s12 m4">
-            <div class="card">
-              <div class="card-image">
-                <a href="{% url 'movie-details' movie.imdbID %}"><img src="{{ movie.Poster.url }}"></a>
-              </div>
-              <div class="card-content">
-                <span class="card-title"><b>{{ movie.Title }}</b></span>
-                <span class="right"><i class="material-icons">date_range</i>{{ movie.Year }}</span>
-                <p><b>{{ movie.Type }}</b></p>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-
   {% endif %}
 
       </div>
@@ -143,4 +176,5 @@
 
 
 <!-----changes from here today---->
+
 {% endblock %}
